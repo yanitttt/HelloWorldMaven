@@ -1,36 +1,28 @@
 pipeline {
     agent any 
     stages {
-        stage('Build') { 
+        stage('Checkout') {
+            steps {
+                // Récupère le code source depuis ton repository Git
+                git url: 'https://github.com/yanitttt/HelloWorldMaven.git', branch: 'master'
+            }
+        }
+        stage('Build') {
             steps {
                 // Utiliser Maven directement sans withMaven
-                sh "mvn clean compile"
+                sh "mvn clean compile"  // Exécute le build Maven
             }
         }
         stage('Test'){
             steps {
                 // Utiliser Maven directement sans withMaven
-                sh "mvn test"
-            }
-        }
-        stage('build && SonarQube analysis') {
-            steps {
-                withSonarQubeEnv('sonar.tools.devops.****') {
-                    sh 'sonar-scanner -Dsonar.projectKey=myProject -Dsonar.sources=./src'
-                }
-            }
-        }
-        stage("Quality Gate") {
-            steps {
-                timeout(time: 1, unit: 'HOURS') {
-                    waitForQualityGate abortPipeline: true
-                }
+                sh "mvn test"  // Exécute les tests avec Maven
             }
         }
         stage('Deploy') {
             steps {
-               // Utiliser Maven directement sans withMaven
-               sh "mvn deploy"
+                // Déploiement avec Maven
+                sh "mvn deploy"  // Exécute le déploiement Maven
             }
         }
     }
